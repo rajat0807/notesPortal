@@ -1,0 +1,13 @@
+<center>{{error}}
+<div id="loginForm">
+	<form class = "col s12" action = "{% url 'brmadmin:signIn' %}" method = "post">
+	{% csrf_token %}
+	<input type="text" class="validate" name = "username" required="">
+    <label for="first_name"></label>
+    <input type="password" class="validate" name = "password" required="">
+    <label for="first_name"></label>
+    <input type="submit" name = "Sign up" value = "Sign-In">
+    <a href="#" class="">SignUp</a>
+    </form>
+</div>
+</center>

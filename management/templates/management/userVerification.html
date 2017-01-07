@@ -1,0 +1,65 @@
+{% extends 'management/base.html' %}
+
+{% block script %}
+	$(document).ready(function() {
+   $("input[id='but']").click(function(){
+      $(this).css('background-color','#9dc91a');
+      $(this).prop('value', 'Verifying...');
+    });
+});
+{% endblock %}
+
+{% block adminPanel %}
+{% endblock %}
+
+{% block body %}
+
+{% if request.user.userprofile.isAdmin %}
+<center>
+
+<form action="{% url 'brmadmin:addSubject' %}">
+<input type="submit" value="Add Subject" style="background: #047de8; color: white; height: 40px; width: 100px; border: 0px solid; display: inline-block;">
+</form>	
+<br><br><br><br><br>
+<table class="table table-striped" style="height: 30%; width: 50%; overflow-y: scroll;">
+ <thead>
+ 	<tr>
+ 		<th>
+ 			Username
+ 		</th>
+ 		<th>
+ 			E-mail
+ 		</th>
+ 		<th>
+ 			Verify
+ 		</th>
+ 	</tr>
+ </thead>
+ <tbody>
+{% for i in users %}
+			<tr>
+			<td>
+			{{i.user.username}}
+			</td>
+			<td>
+			{{i.user.email}}
+			</td>
+			<td>
+			<form action="{% url 'brmadmin:verify' i.user.id %}" method="post">
+			{% csrf_token %}
+			<input type="submit" id="but" value = "Verify"  style="background: green; color: white; height: 30px; width: 100px; border: 0px solid; ">	
+			</form>
+			</td>
+			</tr>
+{% endfor %}
+ </tbody>
+ </table>
+</center>
+{% else %}
+<center>
+<h2 style="color: red;">You are not authorised</h2>
+</center>
+{% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,143 @@
+#topbar{
+  position: fixed;
+  height: 100%;
+  width: 20%;
+  top: 0;
+  left: 0;
+  color: grey;
+}
+
+
+.top_el{
+padding:5px;
+  padding-left: 3%;
+    padding-right: 3%;
+    font-size: 1em;
+    transition: all 0.5s;
+    float: left;
+    margin-right: -1px;
+    border-width: 1px;
+    border-color:#333;
+    border-right-style:solid;
+    cursor: pointer
+}
+
+#bgd{
+	background: #f2f2f4;
+}
+
+#box-container {
+	position: fixed;
+	top: 0;
+  z-index: 1;
+	left: 0;
+	width:100%;
+	height: 64px;
+	background: #e5e4e8;
+}
+#top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  height: 23px;
+}
+
+.topButton{
+	line-height: 64px;
+	position: relative;	
+	top: 0px;
+	float: right;
+	height: 64px;
+	font-family: 'Space Mono', monospace;
+	padding:2px;
+    padding-left: 3%;
+    padding-right: 3%;
+    font-size: 1em;
+}
+.topButton:hover{
+  color: red;
+}
+
+.logo{
+	/*background: grey;*/
+	line-height: 64px;
+	z-index: -1;
+	font-size: 36px; 
+	font-family: 'Vollkorn', serif;
+}
+
+#loginForm{
+	z-index: 9999;
+}
+
+#loginContainer{
+  position: fixed;
+  top:35%;
+  left: 35%;
+  background: white;
+  height: 200px;
+  width: 200px;
+}
+
+
+.imgWrap {
+  position: inherit;
+  height: 200px;
+  width: 200px;
+}
+
+.imgDescription {
+  position: inherit;
+  height: 64px;
+  width: 64px;
+  top: 0;
+  bottom: 0;
+  left: 940px;
+  right: 0;
+  background: #000000;
+  color: #fff;
+
+  visibility: hidden;
+  opacity: 0.9;
+
+  /*-webkit-transition: visibility opacity 0.2s;*/
+  
+}
+
+
+.imgWrap:hover .imgDescription {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+#picChange{
+  position: fixed;
+  top: 25%;
+  left: 30%;
+  height: 30%;
+  width: 40%;
+  background: white;
+}
+
+#picChangeContain{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #000000;
+  opacity: 0.7;
+}
+
+.placard{
+  display: inline-table;
+  margin-bottom: 40px;
+  position: relative;
+  background: white;
+  border-radius: 15px;
+  z-index: 0;
+  box-shadow: 4px 4px 10px #888888;
+}
