@@ -1,0 +1,5 @@
+<form enctype="multipart/form-data" action="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="submit">
+</form>

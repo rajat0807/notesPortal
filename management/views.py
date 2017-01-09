@@ -6,12 +6,13 @@ from django.shortcuts import render , redirect
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate , login , logout
-from .models import noteDetail,noteFile,UserProfile,chapters
+from .models import noteDetail,noteFile,UserProfile,chapters,Image
 from django.contrib.auth.decorators import login_required
-
+from django.forms import formset_factory
+from django.views.generic.edit import FormView
 
 from django.shortcuts import render
-from management.forms import UserForm,UserProfileForm,UserPhotoUpdateForm,UserForm2,AddCourseForm,AddSubjectForm
+from management.forms import UserForm,UserProfileForm,UserPhotoUpdateForm,UserForm2,AddCourseForm,AddSubjectForm,FileFieldForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
@@ -35,13 +36,12 @@ class branchAndYear(generic.ListView):
 
 class detailsBranchAndYear(generic.DetailView):
 	model = noteDetail
-	
 	def get_context_data(self, **kwargs):
 		context = super(detailsBranchAndYear, self).get_context_data(**kwargs)
 		context['usersList'] = User.objects.all()
 		return context
 
-	template_name = 'management/test2.html'	
+	template_name = 'management/test2.html'
 
 
 def signIn(request):
@@ -56,8 +56,11 @@ def signIn(request):
 				return render(request,'management/signIn.html',{'error' : 'Sorry, you are blocked!'})
 			else:
 				login(request,user)
-				course = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year))
-				return redirect('brmadmin:detail',pk = course.id)
+				if user.is_superuser is False:
+					course = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year))
+					return redirect('brmadmin:detail',pk = course.id)
+				else:
+					return redirect('brmadmin:index')
 	else:
 		return render(request,'management/signIn.html')
 
@@ -142,10 +145,22 @@ class CourseDelete(DeleteView):
 
 class SubjectAdd(CreateView):
 	model = noteFile
-	fields = ('notes','subjectName' )
+	fields = ('subjectName',)
+
+	def form_valid(self, form):
+		form.instance.notes = noteDetail.objects.get(Q(branch=self.request.user.userprofile.department)&Q(year=self.request.user.userprofile.year))
+		return super(SubjectAdd	, self).form_valid(form)
 
 class SubjectDelete(DeleteView):
 	model = noteFile
+	def get_success_url(self):
+		subject = noteFile.objects.get(pk=self.kwargs['pk'])
+		return reverse_lazy( 'brmadmin:detail',
+        kwargs = {'pk': subject.notes.id},)
+
+
+class CourseDelete(DeleteView):
+	model = noteDetail
 	success_url = reverse_lazy('brmadmin:index')
 
 
@@ -182,14 +197,74 @@ def block(request,id):
 		return redirect('brmadmin:userBlock')
 
 def detailSubject(request,id,pk):
-	chapter = chapters.objects.filter(Q(subject_id=id))
-	context = {'chapters' : chapter , 'usersList' : User.objects.all()}
+	subject = noteFile.objects.get(pk=pk)
+	chapter = chapters.objects.filter(subject=subject)
+	pk_id = pk
+	context = {'chapters' : chapter , 'usersList' : User.objects.all(), 'subject_id' : pk_id}
 	return render(request,'management/chapters.html',context)
 
 class chapterAdd(CreateView):
 	model = chapters
-	fields = ('subject','chapterName','zippedFile','contribAuthor')
+	fields = ('chapterName','contribAuthor')
+	def form_valid(self, form):
+		form.instance.subject = noteFile.objects.get(pk=self.kwargs['id'])
+		return super(chapterAdd	, self).form_valid(form)
 
-class chapterDelete(DeleteView):
-	model = chapters
-	success_url = reverse_lazy('brmadmin:index')
+	def get_context_data(self, **kwargs):
+		context = super(chapterAdd, self).get_context_data(**kwargs)
+		context['subject_id'] = self.kwargs['id']
+		return context
+
+
+
+def chapterDelete(request,id,pk):
+	subject = noteFile.objects.get(pk=id)
+	chapter = chapters.objects.get(Q(subject=subject)&Q(pk=pk))
+	chapter.delete()
+	return redirect('brmadmin:detailSubject',id=subject.notes.id,pk=id)
+
+def home(request):
+	user = User.objects.get(username=request.user.username)
+	userprofile = UserProfile.objects.get(user=user)
+	no = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year)).id
+	if request.user.is_superuser:
+		return redirect('brmadmin:index')
+	else:
+		return redirect('brmadmin:detail',pk=no)
+
+def photos(request,id,pk,pk_i):
+	chapter = chapters.objects.get(pk=pk_i)
+	photo = Image.objects.filter(chapter=chapter)
+	id_no = chapters.objects.get(pk=pk_i)
+	context = {'photos' : photo, 'usersList' : User.objects.all(),'i' : id_no}
+	return render(request,'management/photos.html',context)
+
+
+class FileFieldView(FormView):
+	form_class = FileFieldForm
+	template_name = 'management/uploadImages.html'
+
+	def get_context_data(self, **kwargs):
+		context = super(FileFieldView, self).get_context_data(**kwargs)
+		context['i'] = chapters.objects.get(pk=self.kwargs['pk_i'])
+		return context
+
+	def post(self, request, *args, **kwargs):
+		form_class = self.get_form_class()
+		form = self.get_form(form_class)
+		files = request.FILES.getlist('images')
+		if form.is_valid():
+			for f in files:
+				image = Image()
+				image.chapter = chapters.objects.get(pk=self.kwargs['pk_i'])
+				image.picture = f
+				image.save()
+			return redirect('brmadmin:photos',id=self.kwargs['id'],pk=self.kwargs['pk'],pk_i=self.kwargs['pk_i'])
+		else:
+			return self.form_invalid(form)
+
+def imageDelete(request,id,pk):
+	image = Image.objects.get(pk=pk)
+	chapter = chapters.objects.get(pk=id)
+	image.delete()
+	return redirect('brmadmin:photos',id=chapter.subject.notes.id,pk=chapter.subject.id,pk_i=chapter.id)

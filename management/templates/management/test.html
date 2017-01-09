@@ -1,7 +1,9 @@
 {% extends 'management/base.html' %}
 
+
+
 {% block adminPanel %}
-	{% if request.user.userprofile.isAdmin %}
+	{% if request.user.userprofile.isAdmin and request.user.is_superuser %}
 		<div id="adminPanel" style="background: white; height: 55%; width: 16%; z-index: 0; position: fixed; top: 23.8%; right: 6%; box-shadow: 4px 4px 10px #888888;">
 		<br>
 		<center>
@@ -28,40 +30,44 @@
 		</div>
 	{% else %}
 	{% endif %}
-
 {% endblock %}
 
 {% block body %}
 	{% load staticfiles %}
-	{% if request.user.userprofile.verified is True %}
-		{% if request.user.userprofile.isAdmin %}
-		<div style="height: 80%; width: 72%;">
-		{% else %}
-		<div style="height: 80%; width: 100%;">
-		{% endif %}
-		{% for i in object_list %}
-		<a href="{% url 'brmadmin:detail' i.id %}">
-		{% if request.user.userprofile.isAdmin %}
-		<div class="placard" style="height: 32%; width: 30%; position: relative; left: 8%;">
-		{% else %}
-		<div class="placard" style="height: 23%; width: 21%; position: relative; left: 8%;">
-		{% endif %}
-		<center><img src="{% static 'management/images/folder.png' %}" style="height: 70%; width: 84%; padding: 15px;">
-		<h3>{{ i.branch }} - {{ i.year }}</h3>
-		{% if request.user.userprofile.isAdmin %}
-		<form action="{% url 'brmadmin:deleteCourse' i.id %}" method="post" style="">
-		        {% csrf_token %}
-		        <input type="hidden" name="album_id" value="{{ album.id }}"/>
-		        <button type="submit" class="btn btn-default btn-sm">
-		        <span class="glyphicon glyphicon-trash"></span>
-		        </button>
+	{% if request.user.userprofile.verified %}
+		{% if request.user.is_superuser%}
+			{% if request.user.userprofile.isAdmin %}
+			<div style="height: 80%; width: 72%;">
+			{% else %}
+			<div style="height: 80%; width: 100%;">
+			{% endif %}
+			{% for i in object_list %}
+			<a href="{% url 'brmadmin:detail' i.id %}">
+			{% if request.user.userprofile.isAdmin %}
+			<div class="placard" style="height: 32%; width: 30%; position: relative; left: 8%;">
+			{% else %}
+			<div class="placard" style="height: 23%; width: 21%; position: relative; left: 8%;">
+			{% endif %}
+			<center><img src="{% static 'management/images/folder.png' %}" style="height: 70%; width: 84%; padding: 15px;">
+			<h3>{{ i.branch }} - {{ i.year }}</h3>
+			{% if request.user.userprofile.isAdmin %}
+			<form action="{% url 'brmadmin:deleteCourse' i.id %}" method="post" style="">
+	        {% csrf_token %}
+	        <input type="hidden" name="album_id" value="{{ album.id }}"/>
+	        <button type="submit" class="btn btn-default btn-sm">
+	        <span class="glyphicon glyphicon-trash"></span>
+	        </button>
 	        </form>
-	     {% endif %}
-		</center>
-		</div>
-		</a>
-		{% endfor %}
-		</div>
+	    	{% endif %}
+			</center>
+			</div>
+			</a>
+			{% endfor %}
+		{% else %}
+			<center>
+				<h3 style="color: red;"> You are not authorised! </h3>
+			</center>
+		{% endif %}
 	{% else %}
 	<center>
 		<h3 style="color: red;"> You are yet to be verified by the admin! </h3>

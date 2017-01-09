@@ -42,10 +42,13 @@
 <center>
 <br><br>
 <span class="logo" style="font-family: 'Coming Soon', cursive;">&nbsp;Notes</span>  
-<br><br>
 </center>
 <center><div style="color: red;"> 
-    {{error}}
+{%if error%}
+{{error}}
+{% else %}
+<br>
+{% endif %}
 </div>
 <div id="loginForm">
     <form class = "col s12" action = "{% url 'brmadmin:signIn' %}" method = "post">

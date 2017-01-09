@@ -2,15 +2,15 @@ from django import forms
 from django.forms import widgets
 from django.forms import ModelForm
 from django.contrib.auth.models import User
-from management.models import UserProfile,noteDetail,noteFile
+from management.models import UserProfile,noteDetail,noteFile,Image
 from django.contrib import admin
 
 class UserForm( forms.ModelForm ):
-    password=forms.CharField(widget=forms.PasswordInput())
-    class Meta:
-        model= User
-        fields = ('username', 'email', 'password')
-    
+	password=forms.CharField(widget=forms.PasswordInput())
+	class Meta:
+		model= User
+		fields = ('username', 'email', 'password')
+	
 
 admin.site.unregister( User )
 admin.site.register( User)
@@ -23,9 +23,9 @@ class UserProfileForm(ModelForm):
 
 class UserForm2(forms.ModelForm):
 
-    class Meta:
-        model = User
-        fields = ('username',)
+	class Meta:
+		model = User
+		fields = ('username',)
 
 class UserPhotoUpdateForm(ModelForm):
 	class Meta:
@@ -41,3 +41,10 @@ class AddSubjectForm(ModelForm):
 	class Meta:
 		model = noteFile
 		fields = ('notes','subjectName')
+
+
+class FileFieldForm(forms.Form):
+	images = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+	class Meta:
+		model = Image
+		fields = ('image',)

@@ -6,6 +6,7 @@ app_name = 'brmadmin'
 
 urlpatterns = [
 	url(r'^login/$',views.signIn,name='signIn'),
+	url(r'^home/$',views.home,name='home'),
 	url(r'^logout/$',views.signOut,name='signOut'),
 	url(r'^register/$', views.register , name = 'register'),
 	url(r'^$',views.branchAndYear.as_view(),name='index'),
@@ -20,6 +21,9 @@ urlpatterns = [
 	url(r'^block/(?P<id>[0-9]+)/$',views.block,name='block'),
 	url(r'^userBlock/$',views.userBlock,name='userBlock'),
 	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)$',views.detailSubject,name='detailSubject'),
-	url(r'^chapter/add/$',views.chapterAdd.as_view(),name='addChapter'),
-	url(r'^chapter/(?P<id>[0-9]+)/(?P<pk>[0-9]+)/delete/$',views.chapterDelete.as_view(),name='deleteChapter'),
+	url(r'^(?P<id>[0-9]+)/chapter/add/$',views.chapterAdd.as_view(),name='addChapter'),
+	url(r'^chapter/(?P<id>[0-9]+)/(?P<pk>[0-9]+)/delete/$',views.chapterDelete,name='deleteChapter'),
+	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)/(?P<pk_i>[0-9]+)$',views.photos,name='photos'),
+	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)/(?P<pk_i>[0-9]+)/images/add/$',views.FileFieldView.as_view(),name='addImages'),
+	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)/images/delete/$',views.imageDelete,name='deleteImages'),
 ]

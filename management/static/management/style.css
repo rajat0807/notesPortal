@@ -141,3 +141,11 @@ padding:5px;
   z-index: 0;
   box-shadow: 4px 4px 10px #888888;
 }
+
+.notActive{
+  color: #494744;
+}
+
+.notActive:hover{
+  color: red;
+}

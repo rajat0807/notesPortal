@@ -38,7 +38,7 @@ class noteFile(models.Model):
 	subjectName = models.CharField(max_length=50)
 
 	def get_absolute_url(self):
-		return reverse('brmadmin:index')
+		return reverse('brmadmin:detailSubject',kwargs={'id':self.notes.pk,'pk':self.pk})
 
 	def __str__(self):
 		return self.subjectName + " - " + self.notes.branch + self.notes.year
@@ -54,8 +54,11 @@ class chapters(models.Model):
 		return reverse('brmadmin:detailSubject',kwargs={'id':self.subject.notes.pk,'pk':self.subject.pk})
 
 	def __str__(self):
-		return self.chapterName
+		return self.chapterName + self.subject.subjectName
 
+class Image(models.Model):
+	chapter = models.ForeignKey(chapters,on_delete=models.CASCADE)
+	picture = models.FileField(upload_to='chapter_images/')
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -77,7 +80,7 @@ class UserProfile(models.Model):
 		('4' , 'Fourth'),
 	)
 
-	picture = models.FileField(upload_to='profile_pictures',default='default_pic.jpg')
+	picture = models.ImageField(upload_to='profile_pictures',default='default_pic.jpg')
 	
 	verified = models.BooleanField(default=False)
 
@@ -90,3 +93,4 @@ class UserProfile(models.Model):
 
 	def __str__(self):
 		return self.user.username
+

@@ -66,7 +66,7 @@
 			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 70%; background: white; width: 30%;">
 				<h3>Add Chapter</h3>
 				<br>
-				<form id="update_user_form" method="POST" action="{% url 'brmadmin:addChapter' %}" enctype="multipart/form-data">
+				<form id="update_user_form" method="POST" action="{% url 'brmadmin:addChapter' subject_id %}" enctype="multipart/form-data">
 					{% csrf_token %}
 					<br>
 		

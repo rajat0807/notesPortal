@@ -16,11 +16,12 @@
 
 {% if request.user.userprofile.isAdmin %}
 <center>
-
-<form action="{% url 'brmadmin:addSubject' %}">
+<h2 style="font-family: 'Ek Mukta', sans-serif; font-size: 34px; display: inline;">User Verification |</h2> <h2 style="display: inline;"><a href="{% url 'brmadmin:userBlock' %}" style="color: #99928b; font-size: 28px;" 
+">User Block</a></h2>
+<!-- <form action="{% url 'brmadmin:addSubject' %}">
 <input type="submit" value="Add Subject" style="background: #047de8; color: white; height: 40px; width: 100px; border: 0px solid; display: inline-block;">
 </form>	
-<br><br><br><br><br>
+ --><br><br><br><br><br>
 <table class="table table-striped" style="height: 30%; width: 50%; overflow-y: scroll;">
  <thead>
  	<tr>
