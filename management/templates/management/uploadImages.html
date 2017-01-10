@@ -56,7 +56,9 @@
 	</a>
 	{% endif %}
 </div>
-<br><br><br><br><br><br><br><br>
+<br><br><br><br>
+<br>
+<br><br><br>
 
 {% if request.user.userprofile.isAdmin %}
 <center>
@@ -65,7 +67,7 @@
 	<div class="col-sm-12 col-md-7">
 		<div class="panel panel-default">
 			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 70%; background: white; width: 30%;">
-				<h3>Add Course</h3>
+				<h3>Add Images</h3>
 				<br>
 				<form enctype="multipart/form-data" action="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}" method="post">
 				    {% csrf_token %}

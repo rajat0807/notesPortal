@@ -56,7 +56,8 @@
 	</a>
 	{% endif %}
 </div>
-<br><br><br><br><br><br><br><br>
+<br><br><br><br>
+<br><br><br>
 <center>
 <div class="container-fluid" style="position: fixed; top: 12%; left: 34%; height: 50%; width: 30%;">
 <div class="row">
@@ -64,7 +65,11 @@
 		<div class="panel panel-default">
 			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 70%; background: white; width: 30%;">
 				<h3>Update</h3>
+				{% if error %}
+				<center><p style="color: red;">{{error}}</p></center>
+				{%else%}
 				<br>
+				{%endif%}
 				<form id="update_user_form" method="POST" action="{% url 'brmadmin:update' %}" enctype="multipart/form-data">
 					{% csrf_token %}
 					<br>

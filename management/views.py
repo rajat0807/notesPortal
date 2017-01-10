@@ -19,6 +19,7 @@ from django.contrib.sessions.models import Session
 from django.contrib import messages
 from django.db.models import Q
 
+IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 
 class branchAndYear(generic.ListView):
@@ -126,12 +127,16 @@ def update(request):
 			user = update_user_form.save()
 			profile = update_profile_form.save(commit=False)
 			profile.user = user
-
+			temp = profile.picture
 			if 'picture' in request.FILES:
 				profile.picture = request.FILES['picture']
+			file_type = profile.picture.url.split('.')[-1]
+			file_type = file_type.lower()
+			if file_type not in IMAGE_FILE_TYPES:
+				profile.picture = temp
+				return render(request,'management/update_user.html',{'update_user_form': update_user_form, 'update_profile_form': update_profile_form,'error' : 'Not a supported image format'})
 
 			profile.save()
-			print("Take me to index")
 			return redirect('brmadmin:index')
 
 		else:
@@ -166,7 +171,7 @@ class SubjectDelete(DeleteView):
 	def get_success_url(self):
 		subject = noteFile.objects.get(pk=self.kwargs['pk'])
 		return reverse_lazy( 'brmadmin:detail',
-        kwargs = {'pk': subject.notes.id},)
+		kwargs = {'pk': subject.notes.id},)
 
 
 class CourseDelete(DeleteView):
@@ -261,6 +266,7 @@ class FileFieldView(FormView):
 
 	def post(self, request, *args, **kwargs):
 		form_class = self.get_form_class()
+		count = 0
 		form = self.get_form(form_class)
 		files = request.FILES.getlist('images')
 		if form.is_valid():
@@ -268,7 +274,12 @@ class FileFieldView(FormView):
 				image = Image()
 				image.chapter = chapters.objects.get(pk=self.kwargs['pk_i'])
 				image.picture = f
-				image.save()
+				file_type = image.picture.url.split('.')[-1]
+				file_type = file_type.lower()
+				if file_type not in IMAGE_FILE_TYPES:
+					print("Hii")
+				else:
+					image.save()
 			return redirect('brmadmin:photos',id=self.kwargs['id'],pk=self.kwargs['pk'],pk_i=self.kwargs['pk_i'])
 		else:
 			return self.form_invalid(form)
