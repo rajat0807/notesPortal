@@ -15,16 +15,12 @@
 		</center>
 		<div style="background: #e5e5e4; height: 60%; width: 80%; padding: 2%; margin: 10%; overflow-y: scroll;">
 			{% for i in usersList %}
-			{% if i.userprofile.verified is False %}
 			<h4 style="font-size: 10px;">
-				{% if i.userprofile.department == request.user.userprofile.department and i.userprofile.year == request.user.userprofile.year %}
-				{{i.username}}
+				{{i.user.username}}
 				<form action="{% url 'brmadmin:verify' i.id %}" style="display: inline; float: right;">
 					<input type="checkbox">
 				</form>
 			</h4>
-				{% endif %}
-			{%endif%}
 			{% endfor %}
 		</div>
 		</div>

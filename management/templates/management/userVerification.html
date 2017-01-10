@@ -7,6 +7,13 @@
       $(this).prop('value', 'Verifying...');
     });
 });
+
+$(document).ready(function() {
+   $("input[id='but2']").click(function(){
+      $(this).prop('value', 'Deleting...');
+    });
+});
+
 {% endblock %}
 
 {% block adminPanel %}
@@ -26,6 +33,9 @@
  <thead>
  	<tr>
  		<th>
+ 			Profile Pic
+ 		</th>
+ 		<th>
  			Username
  		</th>
  		<th>
@@ -34,11 +44,19 @@
  		<th>
  			Verify
  		</th>
+ 		<th>
+ 			Delete
+ 		</th>
  	</tr>
  </thead>
  <tbody>
 {% for i in users %}
 			<tr>
+			<td>
+			<div style="height: 64px; width: 64px; overflow: hidden; background: grey;">
+				<img src="{{ i.picture.url }}" style="max-height: 64px;">		
+			</div>	
+			</td>
 			<td>
 			{{i.user.username}}
 			</td>
@@ -51,6 +69,10 @@
 			<input type="submit" id="but" value = "Verify"  style="background: green; color: white; height: 30px; width: 100px; border: 0px solid; ">	
 			</form>
 			</td>
+			<td><form action="{% url 'brmadmin:deleteUser' i.user.id %}" method="post">
+			{% csrf_token %}
+			<input type="submit" id="but2" name="verify" value = "Delete ID" style="background: #3d5f96; color: white; height: 30px; width: 100px; border: 0px solid; ">
+			</form></td>
 			</tr>
 {% endfor %}
  </tbody>

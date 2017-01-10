@@ -1,5 +1,87 @@
-<form enctype="multipart/form-data" action="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" name="submit">
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	{% load staticfiles %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" media="screen" href="{% static 'management/style.css' %}"/>
+	<link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Ek+Mukta" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Coming+Soon" rel="stylesheet">
+
+	<title>Notes</title>
+	<style>
+		a{
+		   color: inherit;
+	   }
+	   a:hover{
+			color: black;
+		   text-decoration: none;
+	   }
+	</style>
+</head>
+<body id="bgd">
+<div id="box-container">
+	<a href="{% url 'brmadmin:index' %}">
+	<span class="logo" style="font-family: 'Coming Soon', cursive;">&nbsp;Notes</span>
+	<span class="logo" style="font-family: 'Ek Mukta', sans-serif;">Portal</span>
+	</a>
+	{% if request.user.is_authenticated %}
+	<a href="{% url 'brmadmin:signOut' %}" class="topButton">
+	Log Out
+	</a>
+	<div style="height: 64px; width: 140px; float: right; vertical-align: middle; font-family: 'Ek Mukta', sans-serif; font-size: 16px;">
+		<p></p>
+			<p>
+			<span class="glyphicon glyphicon-user" style="float: left;">	
+			</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{request.user.username}}
+		</p> 
+
+		<p>
+		<span class="glyphicon glyphicon-info-sign" style="float: left;">
+				
+			</span>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			{{request.user.userprofile.department}} - {{request.user.userprofile.year}}
+ 		</p>
+	</div>
+	<div style="height: 64px; width: 64px; position: fixed; top: 0px; right: 23%; overflow: hidden; background: grey;">
+		<img src="{{ request.user.userprofile.picture.url }}" style="max-height: 64px;">		
+	</div>
+	{% else %}
+	<a href="{% url 'brmadmin:register' %}" class="topButton">
+	Sign-Up
+	</a>
+	{% endif %}
+</div>
+<br><br><br><br><br><br><br><br>
+
+{% if request.user.userprofile.isAdmin %}
+<center>
+<div class="container-fluid" style="position: fixed; top: 12%; left: 34%; height: 50%; width: 30%;">
+<div class="row">
+	<div class="col-sm-12 col-md-7">
+		<div class="panel panel-default">
+			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 70%; background: white; width: 30%;">
+				<h3>Add Course</h3>
+				<br>
+				<form enctype="multipart/form-data" action="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}" method="post">
+				    {% csrf_token %}
+				    {{ form.as_p }}
+					 <input type="submit" name = "Sign up" value = "Submit" style="background: #047de8; color: white; height: 40px; width: 80px; border: 0px solid; position : fixed; top: 68%; left: 46%;" >
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+</center>
+{% else %}
+	<center>
+<h2 style="color: red;">You are not authorised</h2>
+</center>
+{% endif %}
+</body>
+</html>

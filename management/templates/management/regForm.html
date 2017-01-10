@@ -43,9 +43,13 @@
 <div class="row">
 	<div class="col-sm-12 col-md-7">
 		<div class="panel panel-default">
-			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 70%; background: white; width: 30%;">
+			<div class="panel-body" style="box-shadow: 4px 4px 10px #888888; position: fixed; top: 12%; left: 34%; height: 80%; background: white; width: 30%;">
 				<h3>Register as a new user</h3>
+				{% if error %}
+				<p style="color: red;">{{error}}</p>
+				{% else %}
 				<br>
+				{% endif %}
 				<form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
 					{% csrf_token %}
 					{% include 'management/form-template.html' %}

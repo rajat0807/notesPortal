@@ -23,7 +23,7 @@
 </head>
 <body id="bgd">
 <div id="box-container">
-	<a href="{% url 'brmadmin:index' %}">
+	<a href="{% url 'brmadmin:home' %}">
 	<span class="logo" style="font-family: 'Coming Soon', cursive;">&nbsp;Notes</span>
 	<span class="logo" style="font-family: 'Ek Mukta', sans-serif;">Portal</span>
 	</a>
@@ -47,8 +47,9 @@
 			{{request.user.userprofile.department}} - {{request.user.userprofile.year}}
  		</p>
 	</div>
-	<img src="{{ request.user.userprofile.picture.url }}" style="height: 64px; width: auto; position: fixed; top: 0px;
-	left: 72.7%;">
+	<div style="height: 64px; width: 64px; position: fixed; top: 0px; right: 23%; overflow: hidden; background: grey;">
+		<img src="{{ request.user.userprofile.picture.url }}" style="max-height: 64px;">		
+	</div>
 	{% else %}
 	<a href="{% url 'brmadmin:register' %}" class="topButton">
 	Sign-Up

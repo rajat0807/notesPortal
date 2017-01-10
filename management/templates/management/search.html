@@ -1,0 +1,67 @@
+{% extends 'management/base.html' %}
+
+{% block script %}
+	$(document).ready(function() {
+   $("input[id='but']").click(function(){
+      $(this).css('background-color','#e81717');
+      $(this).prop('value', 'Blocking...');
+    });
+});
+{% endblock %}
+
+{% block adminPanel %}
+{% endblock %}
+
+{% block body %}
+{% if request.user.userprofile.isAdmin %}
+<center>
+<h2 style="font-family: 'Ek Mukta', sans-serif; font-size: 34px; display: inline;">User Block |</h2> <h2 style="display: inline;"><a href="{% url 'brmadmin:userVerification' %}" style="color: #99928b; font-size: 28px;" 
+">User Verification</a></h2>
+<!-- <form action="{% url 'brmadmin:addSubject' %}">
+<input type="submit" value="Add Subject" style="background: #047de8; color: white; height: 40px; width: 100px; border: 0px solid; display: inline-block;">
+</form>	 -->
+<br>
+<form class="navbar-form navbar-left" role="search" method="get" action="{% url 'brmadmin:search' %}" style="position: fixed; left: 38%;"> 
+	<div class="form-group">
+		<input type="text" name="q" class="form-control" value="">
+	</div>
+	<button type="submit" class="btn btn-default">Search</button>
+</form>
+<br><br><br><br>
+{% if keys %}
+<table class="table table-striped" style="height: 30%; width: 50%; overflow-y: scroll;">
+ <thead>
+ 	<tr>
+ 		<th>
+ 			Username
+ 		</th>
+ 		<th>
+ 			E-mail
+ 		</th>
+ 		<th>
+ 			Verify
+ 		</th>
+ 	</tr>
+ </thead>
+ <tbody>
+{% for i in keys %}
+			<tr>
+			<td>{{i.user.username}}</td>
+			<td>{{i.user.email}}</td>
+			<td><form action="{% url 'brmadmin:block' i.id %}" method="post">
+			{% csrf_token %}
+			<input type="submit" id="but" value = "Block"  style="background: #9dc91a; color: white; height: 30px; width: 100px; border: 0px solid; ">	
+			</form></td>
+			</tr>
+{% endfor %}
+ </tbody>
+ </table>	
+{% else %}
+	<h3 style="color: red;">No search result match!</h3>
+{% endif %}
+
+</center>
+{% else %}
+<h2 style="color: red;">You are not authorised</h2>
+{% endif %}
+{% endblock %}

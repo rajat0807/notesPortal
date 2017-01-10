@@ -27,7 +27,10 @@ class branchAndYear(generic.ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super(branchAndYear, self).get_context_data(**kwargs)
-		context['usersList'] = User.objects.all()
+		try:
+			context['usersList'] = UserProfile.objects.filter(Q(department=self.request.user.userprofile.department)&Q(year=self.request.user.userprofile.year)&Q(verified=False))
+		except:
+			pass
 		return context
 
 	def get_queryset(self):
@@ -38,7 +41,10 @@ class detailsBranchAndYear(generic.DetailView):
 	model = noteDetail
 	def get_context_data(self, **kwargs):
 		context = super(detailsBranchAndYear, self).get_context_data(**kwargs)
-		context['usersList'] = User.objects.all()
+		try:
+			context['usersList'] = UserProfile.objects.filter(Q(department=self.request.user.userprofile.department)&Q(year=self.request.user.userprofile.year)&Q(verified=False))
+		except:
+			pass
 		return context
 
 	template_name = 'management/test2.html'
@@ -77,7 +83,11 @@ def register(request):
 		if user_form.is_valid() and profile_form.is_valid():
 			
 			user = user_form.save(commit=False)
-			user.set_password(user.password)
+			if user_form.cleaned_data['password'] == user_form.cleaned_data['confirm_password']:
+				user.set_password(user.password)
+			else:
+				return render(request,'management/regForm.html',{'user_form' : user_form,'profile_form': profile_form,'error' : 'Please use the same password'})
+			
 			user.is_active=True
 			user.save()
 			profile = profile_form.save(commit=False)
@@ -148,7 +158,7 @@ class SubjectAdd(CreateView):
 	fields = ('subjectName',)
 
 	def form_valid(self, form):
-		form.instance.notes = noteDetail.objects.get(Q(branch=self.request.user.userprofile.department)&Q(year=self.request.user.userprofile.year))
+		form.instance.notes = noteDetail.objects.get(Q(branch=self.request.user.userprofile.department)&Q(year=self.request.user.userprofile.year))	
 		return super(SubjectAdd	, self).form_valid(form)
 
 class SubjectDelete(DeleteView):
@@ -268,3 +278,22 @@ def imageDelete(request,id,pk):
 	chapter = chapters.objects.get(pk=id)
 	image.delete()
 	return redirect('brmadmin:photos',id=chapter.subject.notes.id,pk=chapter.subject.id,pk_i=chapter.id)
+
+def Search(request):
+	if request.method=='GET':
+		key=request.GET['q']
+		if key == "":
+			context = None
+		else:
+			context = {'keys' : UserProfile.objects.filter(Q(user__username__icontains=key)&Q(department=request.user.userprofile.department)&Q(year=request.user.userprofile.year)&Q(verified=True)).exclude(user=request.user)}
+		return render(request,'management/search.html',context)
+
+def deleteUser(request,id):
+	if request.method == "POST":
+		user = User.objects.get(pk=id)
+		user.delete()
+		try:
+			if request.POST['verify']:
+				return redirect('brmadmin:userVerification')
+		except:
+			return redirect('brmadmin:userBlock')

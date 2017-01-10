@@ -7,6 +7,12 @@
       $(this).prop('value', 'Blocking...');
     });
 });
+	$(document).ready(function() {
+   $("input[id='but2']").click(function(){
+      $(this).prop('value', 'Deleting...');
+    });
+});
+
 {% endblock %}
 
 {% block adminPanel %}
@@ -20,10 +26,20 @@
 <!-- <form action="{% url 'brmadmin:addSubject' %}">
 <input type="submit" value="Add Subject" style="background: #047de8; color: white; height: 40px; width: 100px; border: 0px solid; display: inline-block;">
 </form>	 -->
-<br><br><br><br><br>
-<table class="table table-striped" style="height: 30%; width: 50%; overflow-y: scroll;">
+<br>
+<form class="navbar-form navbar-left" role="search" method="get" action="{% url 'brmadmin:search' %}" style="position: relative; left: 38%;"> 
+	<div class="form-group">
+		<input type="text" name="q" class="form-control" value="">
+	</div>
+	<button type="submit" class="btn btn-default">Search</button>
+</form>
+<br><br><br><br>
+	<table class="table table-striped" style="height: 30%; width: 50%; overflow-y: scroll;">
  <thead>
  	<tr>
+ 		<th>
+ 			Profile Pic
+ 		</th>
  		<th>
  			Username
  		</th>
@@ -33,16 +49,29 @@
  		<th>
  			Verify
  		</th>
+ 		<th>
+ 			Delete
+ 		</th>
+
  	</tr>
  </thead>
  <tbody>
 {% for i in users %}
 			<tr>
+			<td>
+			<div style="height: 64px; width: 64px; overflow: hidden; background: grey;">
+				<img src="{{ i.picture.url }}" style="max-height: 64px;">		
+			</div>	
+			</td>
 			<td>{{i.user.username}}</td>
 			<td>{{i.user.email}}</td>
 			<td><form action="{% url 'brmadmin:block' i.user.id %}" method="post">
 			{% csrf_token %}
 			<input type="submit" id="but" value = "Block"  style="background: #9dc91a; color: white; height: 30px; width: 100px; border: 0px solid; ">	
+			</form></td>
+			<td><form action="{% url 'brmadmin:deleteUser' i.user.id %}" method="post">
+			{% csrf_token %}
+			<input type="submit" id="but2" value = "Delete ID" style="background: #3d5f96; color: white; height: 30px; width: 100px; border: 0px solid; ">
 			</form></td>
 			</tr>
 {% endfor %}

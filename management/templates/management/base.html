@@ -61,8 +61,9 @@
 			{{request.user.userprofile.department}} - {{request.user.userprofile.year}}
  		</p>
 	</div>
-	<img src="{{ request.user.userprofile.picture.url }}" style="height: 64px; width: auto; position: fixed; top: 0px;
-	left: 58%;">
+	<div style="height: 64px; width: 64px; position: fixed; top: 0px; right: 38%; overflow: hidden; background: grey;">
+		<img src="{{ request.user.userprofile.picture.url }}" style="max-height: 64px;">		
+	</div>
 	{% else %}
 	<a href="{% url 'brmadmin:register' %}" class="topButton">
 	Sign-Up

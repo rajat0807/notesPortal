@@ -85,6 +85,7 @@ class UserProfile(models.Model):
 	verified = models.BooleanField(default=False)
 
 	isAdmin = models.BooleanField(default=False)
+	toBeDeleted = models.BooleanField(default=False)
 
 	year = models.CharField(max_length=1,choices=YEAR)
 	
