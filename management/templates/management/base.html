@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" media="screen" href="{% static 'management/style.css' %}"/>
+	<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+	<script src="{% static 'management/jquery.zoom.js' %}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Ek+Mukta" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Coming+Soon" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
-
 	<title>Notes</title>
 	<style>
 		a{
@@ -23,6 +23,12 @@
        .red{
        	background-color: green;
        }
+
+       .zoom {
+            display:inline-block;
+            position: relative;
+        }
+        
     </style>
    <script type="text/javascript">
    {% block script %}

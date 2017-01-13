@@ -59,6 +59,7 @@ def signIn(request):
 		if user is None:
 			return render(request,'management/signIn.html',{'error':'Invalid username or password'})
 		else:
+			print(user.username + " " + str(user.userprofile.verified))
 			if user.userprofile.verified is False:
 				return render(request,'management/signIn.html',{'error' : 'Sorry, you are blocked!'})
 			else:
@@ -241,10 +242,10 @@ def chapterDelete(request,id,pk):
 def home(request):
 	user = User.objects.get(username=request.user.username)
 	userprofile = UserProfile.objects.get(user=user)
-	no = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year)).id
 	if request.user.is_superuser:
 		return redirect('brmadmin:index')
 	else:
+		no = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year)).id
 		return redirect('brmadmin:detail',pk=no)
 
 def photos(request,id,pk,pk_i):
