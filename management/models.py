@@ -52,7 +52,7 @@ class chapters(models.Model):
 	chapterName = models.CharField(max_length=50)
 	contribAuthor = models.CharField(max_length=50)
 
-	def get_absolute_url(self):
+	def get_absolute_url(self):	
 		return reverse('brmadmin:detailSubject',kwargs={'id':self.subject.notes.pk,'pk':self.subject.pk})
 
 	def __str__(self):
@@ -67,7 +67,7 @@ class Image(models.Model):
 			img = Img.open(self.picture)
 			if img.mode != 'RGB':
 				img = img.convert('RGB')
-			new_width = 800
+			new_width = 300
 			img.thumbnail((new_width, new_width * self.picture.height / self.picture.width), Img.ANTIALIAS)
 			output = io.BytesIO()
 			img.save(output, format='JPEG', quality=70)
