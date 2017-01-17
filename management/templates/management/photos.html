@@ -1,11 +1,12 @@
 {% extends 'management/base.html' %}
 
-{%block script%}
-
+{%block script%}  
 
 $(document).ready(function() {
+	var c = 0;
     
 	var mainLoad = function(){
+	  c = 0;
  	  loc = $(this).find('img').prop("src"),idno = $(this).find('img').prop("id");
       var res = loc.split("/");
       var imageloc = "/" +  res[3] + "/chapter_images/" + res[5];
@@ -36,6 +37,7 @@ $(document).ready(function() {
 
 	 var nextPic = function(){
    		<!-- var cur = $(this).parent().find("img").prop("src"); -->
+   		c = 0;
    		var a = parseInt(idno, 10);
    		idno = (a+1).toString();
    		idnext = (a+2).toString();
@@ -53,12 +55,16 @@ $(document).ready(function() {
 		if(loc_prev!=null){
 		$("#prev").css('visibility','visible');
 		}
+		$("#zoomable").css({'height' : '620px' , "width":"auto"})
+		$("#zoomable").parent().css({'overflow':"hidden" , "height" : "100%"})
 	}
 
    $("#next").click(nextPic);
 
 
+
    var prevPic = function(){
+   		c = 0;
    		var a = parseInt(idno, 10);
    		idno = (a-1).toString();
    		idprev = (a-2).toString();
@@ -76,7 +82,9 @@ $(document).ready(function() {
 		if(loc_next!=null){
 		$("#next").css('visibility','visible');
 		}
-		
+		$("#zoomable").css({'height' : '620px' , "width":"auto"})
+		$("#zoomable").parent().css({'overflow':"hidden" , "height" : "100%"})
+
 	}
 
 	$("#prev").click(prevPic);
@@ -90,6 +98,7 @@ $(document).ready(function() {
 
 	$("#cross").click(close);
 	
+	zoom = [150 , 200 , 250 , 300 , 350, 400];
 	$(document).keydown(function(e){
 	    if (e.keyCode == 37 ) {
 	       if(loc_prev!=null) 
@@ -114,6 +123,27 @@ $(document).ready(function() {
 	    else if(e.keyCode == 27){
 	    	close();
 	    }
+	    else if(e.keyCode == 38){
+      		if(c<=4)
+      		{
+      			c = c +1 ;
+      			$("#zoomable").css({'height' : zoom[c] + "%","width":"auto"})
+      			$("#zoomable").parent().css({'overflow':"scroll" , "height" : "80%"})
+      		}
+      }
+      else if(e.keyCode == 40){
+      		if(c>0)
+      		{
+      			c = c-1;
+      			$("#zoomable").css({'height' : zoom[c] + "%","width":"auto"})
+      			$("#zoomable").parent().css({'overflow':"scroll" , "height" : "80%"})
+      		}
+      		else if(c==0)
+      		{
+      			$("#zoomable").css({'height' : '620px' , "width":"auto"})
+      			$("#zoomable").parent().css({'overflow':"hidden" , "height" : "100%"})
+      		}
+      }
 	});
 
 });
@@ -125,6 +155,7 @@ $(document).ready(function() {
     $(this).css('box-shadow','inherit');
     });
 });
+
 
 
 
@@ -166,7 +197,7 @@ $(document).ready(function() {
 
 {% if photos %}
 	{% if request.user.userprofile.isAdmin %}
-	<div style="height: 80%; width: 72%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 2.5%; border-radius: 20px; overflow: hidden;   padding-top: 2%;">
+	<div style="height: 80%; width: 72%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 2.5%; border-radius: 20px; overflow: hidden;   padding-top: 4%; padding-bottom: 10%;">
 	{% else %}
 	<div style="height: 80%; width: 90%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 4%;  border-radius: 20px; overflow: hidden;	padding-top: 2%; text-align: left;">
 	{% endif %}
@@ -195,15 +226,17 @@ $(document).ready(function() {
 {% endif %}
 	<div id="disp" style="position: fixed; top: 0px; left: 0px; height: 100%; width: 100%; background: black;  z-index: 1; visibility: hidden;">
 		<div style="height: 10%; width: 100%; background: linear-gradient(#888888, black); position: fixed;top: 0px; left: 0px;">
-			<p style="font-family: 'Ek Mukta', sans-serif; color: white; position: fixed; top: 2%; padding-left: 1%; font-size: 200%;"> Image Display</p>
-			<div id="downloadButton" style="position: fixed; top: 2%; left: 46%; height: 6.2%; width: 11.3%;">
-				<a href="" style="color: white; font-family: 'Ek Mukta', sans-serif; position: fixed; top: 3%; left: 47%; font-size: 160%;" download>Download <span class="glyphicon glyphicon-download" style="color: white;"></span></a>
+			<p style="font-family: 'Ek Mukta', sans-serif; color: white; position: fixed; top: 2%; padding-left: 1%; font-size: 30px;"> Image Display</p>
+			<div id="downloadButton" style="position: fixed; top: 2%; left: 46%; height: 6.2%; width: 11.3%; z-index: 100;">
+				<a href="" style="color: white; font-family: 'Ek Mukta', sans-serif; position: fixed; top: 3%; left: 47%; font-size: 23px;" download>Download <span class="glyphicon glyphicon-download" style="color: white;"></span></a>
 			</div>
 		</div>
 		<span id="cross" class="glyphicon glyphicon-remove" style="position:fixed; top: 3.5%; right: 0.5%; color: white; font-size: 150%;"> </span>
 		<span id="prev" class="glyphicon glyphicon-chevron-left" style="position:fixed; font-size: 100px; color: white; top: 35%;" ></span>
-		<div style="width: 100%; height: 100%; padding-top: 8%; z-index: 2; text-align: center;" id="pics">
-				<img src="" style="height: 550px; width: auto;">
+		<div style="width: 100%; height: 100%; padding-top: 8%; z-index: 2; text-align: center; position: relative; z-index: -1	;" id="pics">
+				<div style="position: fixed; background: black; overflow: hidden; height: 620px; width: 83.2%; left: 8.4%;">
+					<img src="" style="height: 100%; width: auto; " id="zoomable">
+				</div>
 		</div>
 		<span id="next" class="glyphicon glyphicon-chevron-right" style="position:fixed; z-index: 2;  color: white; font-size: 100px; top: 35%; right: 0%;"></span>
 	</div>
