@@ -1,7 +1,9 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.auth.models import User
-
+from PIL import Image as Img
+import io
 
 class noteDetail(models.Model):
 	BRANCH = (
@@ -58,7 +60,21 @@ class chapters(models.Model):
 
 class Image(models.Model):
 	chapter = models.ForeignKey(chapters,on_delete=models.CASCADE)
-	picture = models.FileField(upload_to='chapter_images/')
+	picThumbnail = models.ImageField(upload_to='thumbnails/')
+	picture = models.ImageField(upload_to='chapter_images/')
+	def save(self, *args, **kwargs):
+		if self.picture:
+			img = Img.open(self.picture)
+			if img.mode != 'RGB':
+				img = img.convert('RGB')
+			new_width = 800
+			img.thumbnail((new_width, new_width * self.picture.height / self.picture.width), Img.ANTIALIAS)
+			output = io.BytesIO()
+			img.save(output, format='JPEG', quality=70)
+			output.seek(0)
+			self.picThumbnail= InMemoryUploadedFile(output,'ImageField', "%s.jpg" %self.picture.name.split('.')[0], 'image/jpeg', output.getbuffer().nbytes, None)
+		super(Image, self).save(*args, **kwargs)
+
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User,on_delete=models.CASCADE)

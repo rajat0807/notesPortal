@@ -7,9 +7,11 @@ $(document).ready(function() {
     
 	var mainLoad = function(){
  	  loc = $(this).find('img').prop("src"),idno = $(this).find('img').prop("id");
+      var res = loc.split("/");
+      var imageloc = "/" +  res[3] + "/chapter_images/" + res[5];
       $('#disp').css({'visibility':'visible',});
-      $('#disp img').prop("src",loc);
-      $('#disp a').prop("href",loc);
+      $('#disp img').prop("src",imageloc);
+      $('#disp a').prop("href",imageloc);
       var a = parseInt(idno, 10);
 	  idnext = (a+1).toString();
    	  idprev = (a-1).toString(); 
@@ -39,10 +41,12 @@ $(document).ready(function() {
    		idnext = (a+2).toString();
    		idprev = (a).toString();
    		loc = $('#'+idno).prop("src");
+   		var res = loc.split("/");
+        var imageloc = "/" +  res[3] + "/chapter_images/" + res[5];
    		loc_next = $('#'+idnext).prop("src");
    		loc_prev = $('#'+idprev).prop("src");
-   		$('#disp img').prop("src",loc);
-   		$('#disp a').prop("href",loc);
+   		$('#disp img').prop("src",imageloc);
+   		$('#disp a').prop("href",imageloc);
    		if(loc_next == null){
 		  $(this).css('visibility','hidden');
 		}
@@ -60,10 +64,12 @@ $(document).ready(function() {
    		idprev = (a-2).toString();
    		idnext = a.toString();
    		loc = $('#'+idno).prop("src");
+   		var res = loc.split("/");
+        var imageloc = "/" +  res[3] + "/chapter_images/" + res[5];
    		loc_prev = $('#'+idprev).prop("src");
    		loc_next = $('#'+idnext).prop("src")
-   		$('#disp img').prop("src",loc);
-   		$('#disp a').prop("href",loc);
+   		$('#disp img').prop("src",imageloc);
+   		$('#disp a').prop("href",imageloc);
    		if(loc_prev == null){
 		  $(this).css('visibility','hidden');
 		}
@@ -171,7 +177,7 @@ $(document).ready(function() {
 		{% else %}
 		<div style="height:200px; width:20%; position: relative; display: inline-block; overflow: hidden; background: white; text-align: center;" id="ff">
 		{% endif %}
-			<img src="{{c.picture.url}}" style="height: 100%; width: auto; overflow: hidden;" id="{{forloop.counter}}">
+			<img src="{{c.picThumbnail.url}}" style="height: 100%; width: auto; overflow: hidden;" id="{{forloop.counter}}">
 		{% if request.user.userprofile.isAdmin %}
 			<form id="formDelete" action="{% url 'brmadmin:deleteImages' c.chapter.id c.id %}" method="post" style="position: relative; top: 0%; height: 100%; width: 100%;">
 		        {% csrf_token %}

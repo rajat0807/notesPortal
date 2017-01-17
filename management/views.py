@@ -10,7 +10,7 @@ from .models import noteDetail,noteFile,UserProfile,chapters,Image
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
 from django.views.generic.edit import FormView
-
+from PIL import Image as Img
 from django.shortcuts import render
 from management.forms import UserForm,UserProfileForm,UserPhotoUpdateForm,UserForm2,AddCourseForm,AddSubjectForm,FileFieldForm
 from django.http import HttpResponseRedirect
@@ -18,6 +18,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
 from django.contrib import messages
 from django.db.models import Q
+import os
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -251,8 +252,7 @@ def home(request):
 def photos(request,id,pk,pk_i):
 	chapter = chapters.objects.get(pk=pk_i)
 	photo = Image.objects.filter(chapter=chapter)
-	id_no = chapters.objects.get(pk=pk_i)
-	context = {'photos' : photo, 'usersList' : User.objects.all(),'i' : id_no}
+	context = {'photos' : photo, 'usersList' : User.objects.all(),'i' : chapter}
 	return render(request,'management/photos.html',context)
 
 
@@ -272,14 +272,14 @@ class FileFieldView(FormView):
 		files = request.FILES.getlist('images')
 		if form.is_valid():
 			for f in files:
-				image = Image()
-				image.chapter = chapters.objects.get(pk=self.kwargs['pk_i'])
-				image.picture = f
-				file_type = image.picture.url.split('.')[-1]
+				file_type = f.name.split('.')[-1]
 				file_type = file_type.lower()
 				if file_type not in IMAGE_FILE_TYPES:
-					print("Hii")
+					pass
 				else:
+					image = Image()
+					image.chapter = chapters.objects.get(pk=self.kwargs['pk_i'])
+					image.picture = f
 					image.save()
 			return redirect('brmadmin:photos',id=self.kwargs['id'],pk=self.kwargs['pk'],pk_i=self.kwargs['pk_i'])
 		else:
@@ -309,3 +309,14 @@ def deleteUser(request,id):
 				return redirect('brmadmin:userVerification')
 		except:
 			return redirect('brmadmin:userBlock')
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+@receiver(post_delete, sender=Image)
+def photo_post_delete_handler(sender, **kwargs):
+	image = kwargs['instance']
+	storage, path = image.picture.storage, image.picture.path
+	storageT , pathT = image.picThumbnail.storage, image.picThumbnail.path
+	storage.delete(path)
+	storageT.delete(pathT)
