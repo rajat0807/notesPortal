@@ -1,53 +1,23 @@
 {% extends 'management/base.html' %}
 
-
-{% block adminPanel %}
-	{% if request.user.userprofile.isAdmin %}
-		<div id="adminPanel" style="background: white; height: 55%; width: 16%; z-index: 0; position: fixed; top: 23.8%; right: 6%; box-shadow: 4px 4px 10px #888888;">
-		<br>
-		<center>
-		<strong style="padding: 10px;"><a href="{% url 'brmadmin:addSubject' %}">Add Subject</a></strong>
-		<br><br>
-		<strong><a href="{% url 'brmadmin:userVerification' %}">Verify Users</a></strong>
-		<br><br>
-		<strong style="padding: 10px;"><a href="{% url 'brmadmin:userBlock' %}">Block Users</a></strong>
-		</center>
-		<div style="background: #e5e5e4; height: 60%; width: 80%; padding: 2%; margin: 10%; overflow-y: scroll;">
-			{% for i in usersList %}
-			<h4 style="font-size: 10px;">
-				{{i.user.username}}
-				<form action="{% url 'brmadmin:verify' i.id %}" style="display: inline; float: right;">
-					<input type="checkbox">
-				</form>
-			</h4>
-			{% endfor %}
-		</div>
-		</div>
-	{% else %}
-	{% endif %}
-
+{% block addLink %}
+	<strong><a href="{% url 'brmadmin:addSubject' %}">Add Subject</a></strong>
 {% endblock %}
+
 {% block body %}
 	
 {% load staticfiles %}
 
 {% if object.notefile_set.all %}
-	{% if request.user.userprofile.isAdmin %}
-	<div style="height: 80%; width: 72%;">
-	{% else %}
 	<div style="height: 80%; width: 100%;">
-	{% endif %}
 	{% for i in object.notefile_set.all %}
 		<a href="{% url 'brmadmin:detailSubject' i.notes.id i.id %}">
-		{% if request.user.userprofile.isAdmin %}
-		<div class="placard" style="height: 32%; width: 30%; position: relative; left: 8%;">
-		{% else %}
 		<div class="placard" style="height: 23%; width: 21%; position: relative; left: 8%;">
-		{% endif %}
-		<h3>
 		<center><img src="{% static 'management/images/folder.png' %}" style="height: 70%; width: 84%; padding: 15px;">
 		<br>
-		{{ i.subjectName }}</center>
+		<h3>
+		{{ i.subjectName }}
+		</h3>
 		{% if request.user.userprofile.isAdmin %}
 		<form action="{% url 'brmadmin:deleteSubject' i.id %}" method="post" style="display: inline;">
 	        {% csrf_token %}
@@ -57,7 +27,13 @@
 	        </button>
         </form>
         {% endif %}
-		</h3>
+        <form action="{% url 'brmadmin:getSubject' i.id%}" method="post" style="display: inline;">
+	        {% csrf_token %}
+	        <button type="submit" class="btn btn-default btn-sm">
+	        <span class="glyphicon glyphicon-download"></span>
+	        </button>
+        </form>
+		</center>
 		</div>
 		</a>
 	{% endfor %}

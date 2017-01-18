@@ -56,7 +56,7 @@ class chapters(models.Model):
 		return reverse('brmadmin:detailSubject',kwargs={'id':self.subject.notes.pk,'pk':self.subject.pk})
 
 	def __str__(self):
-		return self.chapterName + self.subject.subjectName
+		return self.chapterName + "-" + self.subject.subjectName
 
 class Image(models.Model):
 	chapter = models.ForeignKey(chapters,on_delete=models.CASCADE)
@@ -72,7 +72,7 @@ class Image(models.Model):
 			output = io.BytesIO()
 			img.save(output, format='JPEG', quality=70)
 			output.seek(0)
-			self.picThumbnail= InMemoryUploadedFile(output,'ImageField', "%s.jpg" %self.picture.name.split('.')[0], 'image/jpeg', output.getbuffer().nbytes, None)
+			self.picThumbnail= InMemoryUploadedFile(output,'ImageField', self.picture.name, 'image/jpeg', output.getbuffer().nbytes, None)
 		super(Image, self).save(*args, **kwargs)
 
 

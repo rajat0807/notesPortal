@@ -22,22 +22,21 @@
     </style>
 </head>
 <body id="bgd">
-<div id="box-container">
-    <a href="{% url 'brmadmin:index' %}">
-    <span class="logo" style="font-family: 'Coming Soon', cursive;">&nbsp;Notes</span>
-    <span class="logo" style="font-family: 'Ek Mukta', sans-serif;">Portal</span>
-    </a>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'brmadmin:signOut' %}" class="topButton">
-    Log Out
-    </a>
-    {% else %}
-    <a href="{% url 'brmadmin:register' %}" class="topButton">
-    Sign-Up
-    </a>
-    {% endif %}
+<div id="mainNav" style="position: fixed; height: 12%; width: 100%; z-index: 1">
+    <div id="logoAndBar" style="height: 66.67%; width: 100%; background: #e5e4e8;>" >
+        <a href="{% url 'brmadmin:home' %}"><img src="{% static '/management/images/logo.png' %}" style="margin-left: 0.2%; height: 100%; width: 18%;"></a>
+        <div style="position: relative; float: right; height: 100%; width: 80%;">
+            <a href="{% url 'brmadmin:register' %}">
+               <div style="font-family: 'Space Mono', monospace; float: right; padding: 1.5%; padding-right: 4%; padding-left: 2%;" >
+                    Register
+                </div>  
+            </a>
+        </div>
+    </div>
 </div>
 <br><br><br><br><br><br><br><br>
+
+{% block body %}
 <div style="position: fixed; top: 20%; left: 38%; background: white; height: 50%; width: 22%; box-shadow: 4px 4px 10px #888888;">
 <center>
 <br><br>
@@ -66,6 +65,7 @@
 </div>
 </center>
 </div>
+{% endblock %}
 
 </body>
 </html>

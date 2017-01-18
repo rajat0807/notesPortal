@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import authenticate , login , logout
 from .models import noteDetail,noteFile,UserProfile,chapters,Image
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.forms import formset_factory
 from django.views.generic.edit import FormView
 from PIL import Image as Img
@@ -19,6 +20,9 @@ from django.contrib.sessions.models import Session
 from django.contrib import messages
 from django.db.models import Q
 import os
+import zipfile
+import io
+
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -26,6 +30,9 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 class branchAndYear(generic.ListView):
 
 	template_name = 'management/test.html'
+
+	def _login_required(self):
+		return partial(login_required, login_url='brmadmin:signIn')
 
 	def get_context_data(self, **kwargs):
 		context = super(branchAndYear, self).get_context_data(**kwargs)
@@ -241,13 +248,16 @@ def chapterDelete(request,id,pk):
 	return redirect('brmadmin:detailSubject',id=subject.notes.id,pk=id)
 
 def home(request):
-	user = User.objects.get(username=request.user.username)
-	userprofile = UserProfile.objects.get(user=user)
-	if request.user.is_superuser:
+	try:
+		user = User.objects.get(username=request.user.username)
+		userprofile = UserProfile.objects.get(user=user)
+		if request.user.is_superuser:
+			return redirect('brmadmin:index')
+		else:
+			no = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year)).id
+			return redirect('brmadmin:detail',pk=no)
+	except:
 		return redirect('brmadmin:index')
-	else:
-		no = noteDetail.objects.get(Q(branch=user.userprofile.department)&Q(year=user.userprofile.year)).id
-		return redirect('brmadmin:detail',pk=no)
 
 def photos(request,id,pk,pk_i):
 	chapter = chapters.objects.get(pk=pk_i)
@@ -320,3 +330,55 @@ def photo_post_delete_handler(sender, **kwargs):
 	storageT , pathT = image.picThumbnail.storage, image.picThumbnail.path
 	storage.delete(path)
 	storageT.delete(pathT)
+
+
+def getFilesFromChapters(request,id):
+	images = Image.objects.filter(chapter_id=id)
+	filenames = []
+	for i in images:
+		fName = i.chapter.chapterName
+		filenames.append(i.picture.url[1:])
+	zip_subdir = "Images"
+	zip_filename = "%s.zip" % zip_subdir
+
+	s = io.BytesIO()
+
+	zf = zipfile.ZipFile(s, "w")
+
+	for fpath in filenames:
+		fdir, fname = os.path.split(fpath)
+		zip_path = os.path.join(zip_subdir, fname)
+
+		zf.write(fpath, zip_path)
+
+	zf.close()
+
+	resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+	resp['Content-Disposition'] = 'attachment; filename=' + fName 
+	return resp
+
+def getFilesFromSubjects(request,id):
+	Chapters = chapters.objects.filter(subject_id=id)
+	s = io.BytesIO()
+
+	zf = zipfile.ZipFile(s, "w")
+
+	for chap in Chapters:
+		fName = chap.subject.subjectName
+		filenames = []
+		images = Image.objects.filter(chapter_id=chap.id)
+		for i in images:
+			filenames.append(i.picture.url[1:])
+		zip_subdir = chap.chapterName
+		zip_filename = "%s.zip" % zip_subdir
+		for fpath in filenames:
+			fdir, fname = os.path.split(fpath)
+			zip_path = os.path.join(zip_subdir, fname)
+
+			zf.write(fpath, zip_path)
+
+	zf.close()
+
+	resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
+	resp['Content-Disposition'] = 'attachment; filename=' + fName 
+	return resp

@@ -1,6 +1,7 @@
 from . import views
 from django.conf.urls import url,include
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 
 app_name = 'brmadmin'
 
@@ -9,7 +10,7 @@ urlpatterns = [
 	url(r'^home/$',views.home,name='home'),
 	url(r'^logout/$',views.signOut,name='signOut'),
 	url(r'^register/$', views.register , name = 'register'),
-	url(r'^$',views.branchAndYear.as_view(),name='index'),
+	url(r'^$',login_required(views.branchAndYear.as_view(),login_url='brmadmin:signIn'),name='index'),
 	url(r'^(?P<pk>[0-9]+)/$', views.detailsBranchAndYear.as_view() , name = 'detail'),
 	url(r'^update/$',views.update,name='update'),
 	url(r'^userVerification/$',views.userVerification,name='userVerification'),
@@ -28,4 +29,7 @@ urlpatterns = [
 	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)/(?P<pk_i>[0-9]+)/images/add/$',views.FileFieldView.as_view(),name='addImages'),
 	url(r'^(?P<id>[0-9]+)/(?P<pk>[0-9]+)/images/delete/$',views.imageDelete,name='deleteImages'),
 	url(r'^search/$',views.Search , name = 'search'),
+	url(r'^downloadChapter/(?P<id>[0-9]+)/$',views.getFilesFromChapters , name = 'getChapter'),
+	url(r'^downloadSubject/(?P<id>[0-9]+)/$',views.getFilesFromSubjects , name = 'getSubject'),
+
 ]

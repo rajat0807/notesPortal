@@ -36,7 +36,6 @@ $(document).ready(function() {
    
 
 	 var nextPic = function(){
-   		<!-- var cur = $(this).parent().find("img").prop("src"); -->
    		c = 0;
    		var a = parseInt(idno, 10);
    		idno = (a+1).toString();
@@ -55,7 +54,7 @@ $(document).ready(function() {
 		if(loc_prev!=null){
 		$("#prev").css('visibility','visible');
 		}
-		$("#zoomable").css({'height' : '620px' , "width":"auto"})
+		$("#zoomable").css({'height' : '540px' , "width":"auto"})
 		$("#zoomable").parent().css({'overflow':"hidden" , "height" : "100%"})
 	}
 
@@ -82,7 +81,7 @@ $(document).ready(function() {
 		if(loc_next!=null){
 		$("#next").css('visibility','visible');
 		}
-		$("#zoomable").css({'height' : '620px' , "width":"auto"})
+		$("#zoomable").css({'height' : '540px' , "width":"auto"})
 		$("#zoomable").parent().css({'overflow':"hidden" , "height" : "100%"})
 
 	}
@@ -123,7 +122,7 @@ $(document).ready(function() {
 	    else if(e.keyCode == 27){
 	    	close();
 	    }
-	    else if(e.keyCode == 38){
+	    else if(e.keyCode == 38||e.keyCode == 107){
       		if(c<=4)
       		{
       			c = c +1 ;
@@ -131,7 +130,7 @@ $(document).ready(function() {
       			$("#zoomable").parent().css({'overflow':"scroll" , "height" : "80%"})
       		}
       }
-      else if(e.keyCode == 40){
+      else if(e.keyCode == 40||e.keyCode == 109){
       		if(c>0)
       		{
       			c = c-1;
@@ -161,56 +160,24 @@ $(document).ready(function() {
 
 {%endblock%}
 
-{% block adminPanel %}
-	{% if request.user.userprofile.isAdmin %}
-		<div id="adminPanel" style="background: white; height: 55%; width: 16%; z-index: 0; position: fixed; top: 23.8%; right: 6%; box-shadow: 4px 4px 10px #888888;">
-		<br>
-		<center>
-		<strong style="padding: 10px;"><a href="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}">Add Images</a></strong>
-		<br><br>
-		<strong><a href="{% url 'brmadmin:userVerification' %}">Verify Users</a></strong>
-		<br><br>
-		<strong style="padding: 10px;"><a href="{% url 'brmadmin:userBlock' %}">Block Users</a></strong>
-		</center>
-		<div style="background: #e5e5e4; height: 60%; width: 80%; padding: 2%; margin: 10%; overflow-y: scroll;">
-			{% for i in usersList %}
-			{% if i.userprofile.verified is False %}
-			<h4 style="font-size: 10px;">
-				{% if i.userprofile.department == request.user.userprofile.department and i.userprofile.year == request.user.userprofile.year %}
-				{{i.username}}
-				<form action="{% url 'brmadmin:verify' i.id %}" style="display: inline; float: right;">
-					<input type="checkbox">
-				</form>
-			</h4>
-				{% endif %}
-			{%endif%}
-			{% endfor %}
-		</div>
-		</div>
-	{% else %}
-	{% endif %}
-
+{% block addLink %}
+	<strong style="padding: 10px;"><a href="{% url 'brmadmin:addImages' i.subject.notes.id i.subject.id i.id %}">Add Images</a></strong>
 {% endblock %}	
+
 {% block body %}
 	
 {% load staticfiles %}
 
 {% if photos %}
-	{% if request.user.userprofile.isAdmin %}
-	<div style="height: 80%; width: 72%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 2.5%; border-radius: 20px; overflow: hidden;   padding-top: 4%; padding-bottom: 10%;">
-	{% else %}
-	<div style="height: 80%; width: 90%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 4%;  border-radius: 20px; overflow: hidden;	padding-top: 4%; padding-bottom: 10%; text-align: left;">
-	{% endif %}
+	
+	<div style="height: 80%; width: 90%; background: white; box-shadow: 4px 4px 10px #888888; margin-left: 4%;  border-radius: 20px; margin-top: 0.5%;
+	margin-bottom: 2%; padding-top: 4%; padding-bottom: 10%; text-align: left;">
 	<div style=" height: 100%; width: 80%; position: relative; left: 16%; overflow: hidden;">
 	{% for c in photos %}
-		{% if request.user.userprofile.isAdmin %}
-		<div style="height:160px; width:20%; position: relative; display: inline-block; overflow: hidden; background: white; text-align: center;" id="ff">
-		{% else %}
 		<div style="height:200px; width:20%; position: relative; display: inline-block; overflow: hidden; background: white; text-align: center;" id="ff">
-		{% endif %}
 			<img src="{{c.picThumbnail.url}}" style="height: 100%; width: auto; overflow: hidden;" id="{{forloop.counter}}">
 		{% if request.user.userprofile.isAdmin %}
-			<form id="formDelete" action="{% url 'brmadmin:deleteImages' c.chapter.id c.id %}" method="post" style="position: relative; top: 0%; height: 100%; width: 100%;">
+			<form id="formDelete" action="{% url 'brmadmin:deleteImages' c.chapter.id c.id %}" method="post" style="position: relative; top: 0%; height: 100%; width: 103%;">
 		        {% csrf_token %}
 		        <button type="submit" class="btn btn-danger btn-sm" style="position: relative; top: -100%; left: 38%;"> 
 		        <span class="glyphicon glyphicon-trash"></span>
@@ -224,6 +191,7 @@ $(document).ready(function() {
 {% else %}
 	<center><h3> Sorry , no notes! </h3></center>
 {% endif %}
+
 	<div id="disp" style="position: fixed; top: 0px; left: 0px; height: 100%; width: 100%; background: black;  z-index: 1; visibility: hidden;">
 		<div style="height: 10%; width: 100%; background: linear-gradient(#888888, black); position: fixed;top: 0px; left: 0px;">
 			<p style="font-family: 'Ek Mukta', sans-serif; color: white; position: fixed; top: 2%; padding-left: 1%; font-size: 30px;"> Image Display</p>
@@ -234,7 +202,7 @@ $(document).ready(function() {
 		<span id="cross" class="glyphicon glyphicon-remove" style="position:fixed; top: 3.5%; right: 0.5%; color: white; font-size: 150%;"> </span>
 		<span id="prev" class="glyphicon glyphicon-chevron-left" style="position:fixed; font-size: 100px; color: white; top: 35%;" ></span>
 		<div style="width: 100%; height: 100%; padding-top: 8%; z-index: 2; text-align: center; position: relative; z-index: -1	;" id="pics">
-				<div style="position: fixed; background: black; overflow: hidden; height: 620px; width: 83.2%; left: 8.4%;">
+				<div style="position: fixed; background: black; overflow: hidden; height: 540px; width: 83.2%; left: 8.4%;">
 					<img src="" style="height: 100%; width: auto; " id="zoomable">
 				</div>
 		</div>

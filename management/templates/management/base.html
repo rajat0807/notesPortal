@@ -36,58 +36,65 @@
 </script>
 </head>
 <body id="bgd">
-<div id="box-container">
-	
 
-	<a href="{% url 'brmadmin:home' %}">
-		<span class="logo" style="font-family: 'Coming Soon', cursive;" style="color: black;" >&nbsp;Notes</span>
-	<span class="logo" style="font-family: 'Ek Mukta', sans-serif;" style="color: black;">Portal</span>
-	</a>
+<div id="mainNav" style="position: fixed; height: 12%; width: 100%; z-index: 1; box-shadow: 0 8px 6px -6px #888888;" >
+	<div id="logoAndBar" style="height: 66.67%; width: 100%; background: #e5e4e8;>" >
+		<a href="{% url 'brmadmin:home' %}"><img src="{% static '/management/images/logo.png' %}" style="margin-left: 0.2%; height: 100%; width: 18%;"></a>
+		<div style="position: relative; float: right; height: 100%; width: 80%;">
+			{% if request.user.is_authenticated %}
+				<a href="{% url 'brmadmin:signOut' %}">
+					<div style="font-family: 'Space Mono', monospace; float: right; padding: 1.5%; padding-right: 4%; padding-left: 2%;" >
+						LogOut
+					</div>	
+				</a>
+				<a href="{% url 'brmadmin:update' %}">
+					<div style="font-family: 'Space Mono', monospace; float: right; padding: 1.5%; padding-right: 4%; padding-left: 2%;" >
+						Update Profile
+					</div>
+				</a>	
+				<div style="float: right; height: 100%; width:10%; padding-top: 1%; text-align: center;">
+					<span class="glyphicon glyphicon-user"></span>
+					<strong>{{request.user.username}}</strong>
+					<br>
+					<span class="glyphicon glyphicon-info-sign"></span>
+					<strong>{{request.user.userprofile.department}} - {{request.user.userprofile.year}}</strong>
+				</div>
+				<div style="height: 100%; float: right; width: 5.2%; background: grey; overflow: hidden; text-align: center;">
+					<img src="{{request.user.userprofile.picture.url}}" style=" float: left; width: auto; height: 100%;">	
+				</div>
+			{% else %}
+				<a href="{% url 'brmadmin:register' %}">
+					<div style="font-family: 'Space Mono', monospace; float: right; padding: 1.5%; padding-right: 4%; padding-left: 2%;" >
+						Register
+					</div>	
+				</a>
+			{% endif %}
 
-	{% if request.user.is_authenticated %}
-	<a href="{% url 'brmadmin:signOut' %}" class="topButton">
-	Log Out
-	</a>
-	<a href="{% url 'brmadmin:update' %}" class="topButton">
-	Update Profile
-	</a>
-	<div style="height: 64px; width: 140px; float: right; vertical-align: middle; font-family: 'Ek Mukta', sans-serif; font-size: 16px;">
-		<p></p>
-			<p>
-			<span class="glyphicon glyphicon-user" style="float: left;">	
-			</span>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{request.user.username}}
-		</p> 
-
-		<p>
-		<span class="glyphicon glyphicon-info-sign" style="float: left;">
-				
-			</span>
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			{{request.user.userprofile.department}} - {{request.user.userprofile.year}}
- 		</p>
+		</div>
 	</div>
-	<div style="height: 64px; width: 64px; position: fixed; top: 0px; right: 38%; overflow: hidden; background: grey;">
-		<img src="{{ request.user.userprofile.picture.url }}" style="max-height: 64px;">		
-	</div>
+	{% if request.user.userprofile.isAdmin and request.user.is_superuser %}
+		<div style="height: 33.33%; width: 100%; padding-top: 0.3%; background: white; text-align: center;">
+			<center>
+			{%block addLink%}
+			{%endblock%}
+			<strong style="padding-right: 5%; padding-left: 5%;"><a href="{% url 'brmadmin:userVerification' %}">Verify Users</a></strong>
+			<strong><a href="{% url 'brmadmin:userBlock' %}">Block Users</a></strong>
+			</center>
+		</div>
 	{% else %}
-	<a href="{% url 'brmadmin:register' %}" class="topButton">
-	Sign-Up
-	</a>
+
 	{% endif %}
+	</div>
 </div>
+
 <br><br><br><br><br><br><br><br>
 {% if request.user.is_authenticated %}
-<div id="prio" style="">
 	{% block body %}
 	{% endblock %}
-</div>
 {% else %}
 	{% include 'management/signIn.html' %}
 {% endif %}
 
-{% block adminPanel %}
-{% endblock %}
 
 </body>
 </html>
